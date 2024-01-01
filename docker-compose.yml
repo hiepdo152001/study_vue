@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+
+    php:
+        container_name: bookstore_backend
+        image: bookstore:backend
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        volumes:
+            - ./backend:/var/www/html
+            - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+        ports:
+            - 9000:9000
+        networks:
+            - backend
+
+    mysql:
+        image: mysql:8.0
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: bookstore-database
+        command: --default-authentication-plugin=mysql_native_password
+        volumes:
+            - ./docker/mysql:/var/lib/mysql
+        ports:
+            - 3306:3306
+        networks:
+            - backend
+
+    nginx:
+        image: nginx:1.25.1
+        restart: unless-stopped
+        volumes:
+            - ./backend:/var/www/html/backend
+            - ./frontend:/var/www/html/frontend
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+            - ./docker/nginx/log/:/var/log/nginx
+        depends_on:
+            - php
+            - mysql
+        ports:
+            - 80:80
+        networks:
+            - backend
+            - frontend
+
+    mailhog:
+        image: mailhog/mailhog:latest
+        restart: always
+        ports:
+            - 1025:1025
+            - 8025:8025
+        networks:
+            - backend
+
+    node:
+        container_name: bookstore_frontend
+        image: bookstore:frontend
+        stdin_open: true
+        restart: always
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        ports:
+            - "5173:5173"
+        environment:
+            - CHOKIDAR_USEPOLLING=true
+        volumes:
+            - ./frontend:/app
+        networks:
+            - frontend
+
+networks:
+    backend:
+    frontend:
