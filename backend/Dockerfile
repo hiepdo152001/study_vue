@@ -23,4 +23,4 @@ WORKDIR /var/www/html
 
 # Copy existing application directory contents to the working directory
 COPY ./ .
-# RUN composer install
+RUN composer install
