@@ -3,8 +3,8 @@ version: "3.8"
 services:
 
     php:
-        container_name: bookstore_backend
-        image: bookstore:backend
+        container_name: viblo_backend
+        image: viblo:backend
         build:
             context: ./backend
             dockerfile: Dockerfile
@@ -21,12 +21,23 @@ services:
         restart: unless-stopped
         environment:
             MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: bookstore-database
+            MYSQL_DATABASE: viblo-database
         command: --default-authentication-plugin=mysql_native_password
         volumes:
             - ./docker/mysql:/var/lib/mysql
         ports:
             - 3306:3306
+        networks:
+            - backend
+
+    phpmyadmin:
+        image: phpmyadmin
+        ports:
+            - 8181:80
+        environment:
+            PMA_HOST: mysql
+            PMA_USER: root
+            PMA_PASSWORD: root
         networks:
             - backend
 
@@ -57,8 +68,8 @@ services:
             - backend
 
     node:
-        container_name: bookstore_frontend
-        image: bookstore:frontend
+        container_name: viblo_frontend
+        image: viblo:frontend
         stdin_open: true
         restart: always
         build:
