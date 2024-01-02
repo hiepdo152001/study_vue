@@ -1,2 +1,3 @@
 /docker/mysql/*
-/docker/nginx/log/*
+/docker/nginx/log
+/docker/db
