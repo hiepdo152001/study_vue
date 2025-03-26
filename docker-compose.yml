@@ -58,14 +58,14 @@ services:
             - backend
             - frontend
 
-    mailhog:
-        image: mailhog/mailhog:latest
-        restart: always
-        ports:
-            - 1025:1025
-            - 8025:8025
-        networks:
-            - backend
+    # mailhog:
+    #     image: mailhog/mailhog:latest
+    #     restart: always
+    #     ports:
+    #         - 1025:1025
+    #         - 8025:8025
+    #     networks:
+    #         - backend
 
     node:
         container_name: viblo_frontend
